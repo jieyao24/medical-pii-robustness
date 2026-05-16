@@ -1,0 +1,19 @@
+# Data — never commit
+data/
+*.jsonl
+*.parquet
+*.csv.gz
+
+# Model checkpoints
+*.bin
+*.safetensors
+checkpoints/
+
+# Logs
+*.log
+wandb/
+
+# Environment
+__pycache__/
+.env
+*.pyc
