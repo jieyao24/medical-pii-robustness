@@ -1,0 +1,69 @@
+{
+  "ai4privacy": {
+    "private_url": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0
+    },
+    "account_number": {
+      "precision": 0.02831023296962548,
+      "recall": 0.5052631578947369,
+      "f1-score": 0.053616308293772695,
+      "support": 190
+    },
+    "private_person": {
+      "precision": 0.1867572156196944,
+      "recall": 0.5781865965834428,
+      "f1-score": 0.2823227462303497,
+      "support": 761
+    },
+    "private_phone": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0
+    },
+    "private_address": {
+      "precision": 0.3549222797927461,
+      "recall": 0.46704545454545454,
+      "f1-score": 0.4033366045142297,
+      "support": 1760
+    },
+    "private_date": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0
+    },
+    "private_email": {
+      "precision": 0.13838120104438642,
+      "recall": 0.1875,
+      "f1-score": 0.15923885828743112,
+      "support": 848
+    },
+    "secret": {
+      "precision": 0.08312958435207823,
+      "recall": 0.1878453038674033,
+      "f1-score": 0.11525423728813558,
+      "support": 362
+    },
+    "micro avg": {
+      "precision": 0.11876217593286378,
+      "recall": 0.40423361387401174,
+      "f1-score": 0.18358718943649738,
+      "support": 3921
+    }
+  },
+  "mimic": {
+    "total_notes": 500,
+    "total_entities_detected": 530,
+    "entities_per_note": 1.06,
+    "entity_type_counts": {
+      "account_number": 13,
+      "private_person": 309,
+      "private_date": 206,
+      "private_address": 2
+    }
+  }
+}
