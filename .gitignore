@@ -9,9 +9,9 @@ data/
 *.safetensors
 checkpoints/
 
-# Logs
-*.log
-logs/
+# Logs — ignore SLURM-numbered outputs, track only named phase logs
+logs/baseline_eval_[0-9]*.out
+logs/baseline_eval_[0-9]*.err
 wandb/
 
 # Environment
