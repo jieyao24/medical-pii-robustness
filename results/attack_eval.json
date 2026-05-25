@@ -1,0 +1,98 @@
+{
+  "homoglyph": {
+    "private_person": {
+      "originally_detected": 369,
+      "evaded": 23,
+      "total": 444,
+      "evasion_rate": 0.0623
+    },
+    "private_address": {
+      "originally_detected": 924,
+      "evaded": 161,
+      "total": 1433,
+      "evasion_rate": 0.1742
+    },
+    "private_email": {
+      "originally_detected": 499,
+      "evaded": 57,
+      "total": 499,
+      "evasion_rate": 0.1142
+    }
+  },
+  "zwsp": {
+    "private_person": {
+      "originally_detected": 369,
+      "evaded": 109,
+      "total": 444,
+      "evasion_rate": 0.2954
+    },
+    "private_address": {
+      "originally_detected": 924,
+      "evaded": 480,
+      "total": 1433,
+      "evasion_rate": 0.5195
+    },
+    "account_number": {
+      "originally_detected": 109,
+      "evaded": 82,
+      "total": 121,
+      "evasion_rate": 0.7523
+    },
+    "private_email": {
+      "originally_detected": 499,
+      "evaded": 329,
+      "total": 499,
+      "evasion_rate": 0.6593
+    },
+    "secret": {
+      "originally_detected": 141,
+      "evaded": 73,
+      "total": 173,
+      "evasion_rate": 0.5177
+    }
+  },
+  "whitespace": {
+    "private_person": {
+      "originally_detected": 369,
+      "evaded": 356,
+      "total": 444,
+      "evasion_rate": 0.9648
+    },
+    "private_address": {
+      "originally_detected": 924,
+      "evaded": 827,
+      "total": 1433,
+      "evasion_rate": 0.895
+    }
+  },
+  "abbreviation": {
+    "private_person": {
+      "originally_detected": 369,
+      "evaded": 38,
+      "total": 444,
+      "evasion_rate": 0.103
+    }
+  },
+  "honorific": {
+    "private_person": {
+      "originally_detected": 369,
+      "evaded": 26,
+      "total": 444,
+      "evasion_rate": 0.0705
+    }
+  },
+  "field_format": {
+    "private_person": {
+      "originally_detected": 369,
+      "evaded": 26,
+      "total": 444,
+      "evasion_rate": 0.0705
+    },
+    "private_address": {
+      "originally_detected": 924,
+      "evaded": 244,
+      "total": 1433,
+      "evasion_rate": 0.2641
+    }
+  }
+}

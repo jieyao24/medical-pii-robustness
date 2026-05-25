@@ -1,0 +1,81 @@
+{
+  "run_label": "LoRA (lora_r8_n1000)",
+  "adapter": "results/checkpoints/lora_r8_n1000/adapter",
+  "n_test_notes": 1000,
+  "exact_f1": {
+    "account_number": {
+      "precision": 0.39814814814814814,
+      "recall": 0.31272727272727274,
+      "f1": 0.35030549898167007,
+      "tp": 86,
+      "fp": 130,
+      "fn": 189,
+      "support": 275
+    },
+    "private_person": {
+      "precision": 0.08409298085688241,
+      "recall": 0.13977272727272727,
+      "f1": 0.10500853727945361,
+      "tp": 369,
+      "fp": 4019,
+      "fn": 2271,
+      "support": 2640
+    },
+    "private_date": {
+      "precision": 0.49443969204448246,
+      "recall": 0.6358635863586358,
+      "f1": 0.5563041385948025,
+      "tp": 578,
+      "fp": 591,
+      "fn": 331,
+      "support": 909
+    },
+    "micro avg": {
+      "precision": 0.1789364282002425,
+      "recall": 0.27013598326359833,
+      "f1": 0.2152756069605085,
+      "tp": 1033,
+      "fp": 4740,
+      "fn": 2791,
+      "support": 3824
+    }
+  },
+  "overlap_f1": {
+    "account_number": {
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666,
+      "tp": 967,
+      "fp": 967,
+      "fn": 0,
+      "support": 967
+    },
+    "private_person": {
+      "precision": 0.5296868909964921,
+      "recall": 0.985258579023683,
+      "f1": 0.6889733840304182,
+      "tp": 4077,
+      "fp": 3620,
+      "fn": 61,
+      "support": 4138
+    },
+    "private_date": {
+      "precision": 0.49941734642916596,
+      "recall": 1.0,
+      "f1": 0.6661485511269013,
+      "tp": 3000,
+      "fp": 3007,
+      "fn": 0,
+      "support": 3000
+    },
+    "micro avg": {
+      "precision": 0.5143880291597391,
+      "recall": 0.9924737816162862,
+      "f1": 0.6775891841806007,
+      "tp": 8044,
+      "fp": 7594,
+      "fn": 61,
+      "support": 8105
+    }
+  }
+}

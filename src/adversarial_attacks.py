@@ -275,6 +275,8 @@ def main():
                         choices=list(ATTACKS.keys()),
                         help="Which attacks to run (default: all)")
     parser.add_argument("--model", default="openai/privacy-filter")
+    parser.add_argument("--adapter", default=None,
+                        help="Path to LoRA adapter dir. If omitted, uses base model.")
     parser.add_argument("--device", type=int, default=-1)
     parser.add_argument("--output", default="results/attack_eval.json")
     parser.add_argument("--seed", type=int, default=42)
@@ -282,13 +284,33 @@ def main():
 
     random.seed(args.seed)
 
-    print(f"Loading {args.model}...")
-    pipe = pipeline(
-        "token-classification",
-        model=args.model,
-        aggregation_strategy="simple",
-        device=args.device,
-    )
+    if args.adapter:
+        print(f"Loading base model {args.model} + LoRA adapter from {args.adapter}...")
+        from peft import PeftModel
+        from transformers import AutoModelForTokenClassification, AutoTokenizer
+        base = AutoModelForTokenClassification.from_pretrained(args.model)
+        model = PeftModel.from_pretrained(base, args.adapter)
+        model = model.merge_and_unload()
+        tokenizer = AutoTokenizer.from_pretrained(args.model)
+        pipe = pipeline(
+            "token-classification",
+            model=model,
+            tokenizer=tokenizer,
+            aggregation_strategy="simple",
+            device=args.device,
+        )
+        run_label = f"LoRA ({args.adapter})"
+    else:
+        print(f"Loading base model {args.model}...")
+        pipe = pipeline(
+            "token-classification",
+            model=args.model,
+            aggregation_strategy="simple",
+            device=args.device,
+        )
+        run_label = f"Baseline ({args.model})"
+
+    print(f"Run: {run_label}")
 
     examples = load_ai4privacy_examples(max_samples=args.max_samples)
     print(f"Loaded {len(examples)} examples with PII entities.\n")
@@ -302,8 +324,9 @@ def main():
     print_evasion_table(results)
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+    output = {"run_label": run_label, "attacks": results}
     with open(args.output, "w") as f:
-        json.dump(results, f, indent=2)
+        json.dump(output, f, indent=2)
     print(f"Results saved to {args.output}")
 
 

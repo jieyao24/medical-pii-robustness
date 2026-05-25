@@ -1,0 +1,101 @@
+{
+  "run_label": "LoRA (results/checkpoints/lora_r8_n5000/adapter)",
+  "attacks": {
+    "homoglyph": {
+      "private_person": {
+        "originally_detected": 322,
+        "evaded": 37,
+        "total": 444,
+        "evasion_rate": 0.1149
+      },
+      "private_address": {
+        "originally_detected": 824,
+        "evaded": 162,
+        "total": 1433,
+        "evasion_rate": 0.1966
+      },
+      "private_email": {
+        "originally_detected": 495,
+        "evaded": 59,
+        "total": 499,
+        "evasion_rate": 0.1192
+      }
+    },
+    "zwsp": {
+      "private_person": {
+        "originally_detected": 322,
+        "evaded": 195,
+        "total": 444,
+        "evasion_rate": 0.6056
+      },
+      "private_address": {
+        "originally_detected": 824,
+        "evaded": 492,
+        "total": 1433,
+        "evasion_rate": 0.5971
+      },
+      "account_number": {
+        "originally_detected": 117,
+        "evaded": 111,
+        "total": 121,
+        "evasion_rate": 0.9487
+      },
+      "private_email": {
+        "originally_detected": 495,
+        "evaded": 400,
+        "total": 499,
+        "evasion_rate": 0.8081
+      },
+      "secret": {
+        "originally_detected": 130,
+        "evaded": 80,
+        "total": 173,
+        "evasion_rate": 0.6154
+      }
+    },
+    "whitespace": {
+      "private_person": {
+        "originally_detected": 322,
+        "evaded": 307,
+        "total": 444,
+        "evasion_rate": 0.9534
+      },
+      "private_address": {
+        "originally_detected": 824,
+        "evaded": 733,
+        "total": 1433,
+        "evasion_rate": 0.8896
+      }
+    },
+    "abbreviation": {
+      "private_person": {
+        "originally_detected": 322,
+        "evaded": 35,
+        "total": 444,
+        "evasion_rate": 0.1087
+      }
+    },
+    "honorific": {
+      "private_person": {
+        "originally_detected": 322,
+        "evaded": 22,
+        "total": 444,
+        "evasion_rate": 0.0683
+      }
+    },
+    "field_format": {
+      "private_person": {
+        "originally_detected": 322,
+        "evaded": 23,
+        "total": 444,
+        "evasion_rate": 0.0714
+      },
+      "private_address": {
+        "originally_detected": 824,
+        "evaded": 265,
+        "total": 1433,
+        "evasion_rate": 0.3216
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "run_label": "Baseline (no fine-tuning)",
+  "adapter": null,
+  "n_test_notes": 1000,
+  "exact_f1": {
+    "private_phone": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 91,
+      "fn": 0,
+      "support": 0
+    },
+    "account_number": {
+      "precision": 0.3125,
+      "recall": 0.2909090909090909,
+      "f1": 0.30131826741996237,
+      "tp": 80,
+      "fp": 176,
+      "fn": 195,
+      "support": 275
+    },
+    "private_person": {
+      "precision": 0.06643279982459988,
+      "recall": 0.11477272727272728,
+      "f1": 0.08415497847521179,
+      "tp": 303,
+      "fp": 4258,
+      "fn": 2337,
+      "support": 2640
+    },
+    "private_address": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 19,
+      "fn": 0,
+      "support": 0
+    },
+    "private_date": {
+      "precision": 0.40055440055440056,
+      "recall": 0.6358635863586358,
+      "f1": 0.49149659863945583,
+      "tp": 578,
+      "fp": 865,
+      "fn": 331,
+      "support": 909
+    },
+    "micro avg": {
+      "precision": 0.15086342229199373,
+      "recall": 0.2513075313807531,
+      "f1": 0.18854227977241517,
+      "tp": 961,
+      "fp": 5409,
+      "fn": 2863,
+      "support": 3824
+    }
+  },
+  "overlap_f1": {
+    "private_phone": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 162,
+      "fn": 0,
+      "support": 0
+    },
+    "account_number": {
+      "precision": 0.7736,
+      "recall": 1.0,
+      "f1": 0.8723500225529994,
+      "tp": 967,
+      "fp": 283,
+      "fn": 0,
+      "support": 967
+    },
+    "private_person": {
+      "precision": 0.6066656427584088,
+      "recall": 0.9545674238762687,
+      "f1": 0.7418536951826463,
+      "tp": 3950,
+      "fp": 2561,
+      "fn": 188,
+      "support": 4138
+    },
+    "private_address": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tp": 0,
+      "fp": 21,
+      "fn": 0,
+      "support": 0
+    },
+    "private_date": {
+      "precision": 0.47816385081287854,
+      "recall": 1.0,
+      "f1": 0.6469700237222342,
+      "tp": 3000,
+      "fp": 3274,
+      "fn": 0,
+      "support": 3000
+    },
+    "micro avg": {
+      "precision": 0.5568293712195808,
+      "recall": 0.9768044417026527,
+      "f1": 0.7093132643461899,
+      "tp": 7917,
+      "fp": 6301,
+      "fn": 188,
+      "support": 8105
+    }
+  }
+}
