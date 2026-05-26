@@ -97,9 +97,10 @@ def load_clinical_f1(name: str) -> dict:
 
 def load_ai4p_f1(name: str) -> float | None:
     """
-    Load best AI4Privacy micro F1 for one config.
+    Load AI4Privacy micro F1 for one config.
     Baseline: from results/baseline_eval.json
-    LoRA:     last epoch of results/checkpoints/<name>/forgetting_history.json
+    LoRA:     prefers corrected post-hoc eval (forgetting_history_corrected.json);
+              falls back to training-time history (forgetting_history.json).
     """
     if name == "baseline":
         data = load_json("results/baseline_eval.json")
@@ -107,10 +108,14 @@ def load_ai4p_f1(name: str) -> float | None:
             return None
         return data["ai4privacy"]["micro avg"]["f1-score"]
     else:
+        # Prefer corrected post-hoc values (fixed label map + span F1)
+        corrected = load_json(f"results/checkpoints/{name}/forgetting_history_corrected.json")
+        if corrected is not None:
+            return corrected.get("ai4privacy_micro_f1_corrected")
+        # Fall back to original training-time history
         data = load_json(f"results/checkpoints/{name}/forgetting_history.json")
         if data is None:
             return None
-        # Return the best (max) epoch F1 — forgetting plateaus so last ≈ best
         return max(e["ai4privacy_micro_f1"] for e in data)
 
 

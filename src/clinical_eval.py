@@ -41,16 +41,18 @@ TEST_END   = 22000
 
 def span_f1_exact(gold_spans, pred_spans):
     """
-    gold_spans / pred_spans: list of (start, end, entity_type)
-    TP: predicted span matches gold on all three fields exactly.
+    gold_spans / pred_spans: list of (doc_i, start, end, entity_type)
+    TP: predicted span matches gold on all four fields exactly.
+    doc_i prevents coordinate collisions across documents (many MIMIC notes
+    share the same character offsets since each starts at position 0).
     Returns per-type + micro avg report dict.
     """
     gold_by_type = defaultdict(set)
     pred_by_type = defaultdict(set)
-    for s, e, t in gold_spans:
-        gold_by_type[t].add((s, e))
-    for s, e, t in pred_spans:
-        pred_by_type[t].add((s, e))
+    for doc_i, s, e, t in gold_spans:
+        gold_by_type[t].add((doc_i, s, e))
+    for doc_i, s, e, t in pred_spans:
+        pred_by_type[t].add((doc_i, s, e))
 
     return _compute_report(gold_by_type, pred_by_type)
 
@@ -61,49 +63,56 @@ def span_f1_exact(gold_spans, pred_spans):
 
 def span_f1_overlap(gold_spans, pred_spans):
     """
-    TP: a predicted span overlaps a gold span of the same type.
-    Each gold span can be matched at most once (greedy left-to-right).
+    TP: a predicted span overlaps a gold span of the same type in the same document.
+    Each gold span can be matched at most once (greedy left-to-right, per document).
+
+    Matching is done per (doc_i, entity_type) bucket to prevent cross-document
+    coordinate collisions. MIMIC notes share many identical character offsets
+    (e.g. 'Name:' at position 9 in every note), so flat cross-document matching
+    would spuriously inflate TP counts.
     """
-    gold_by_type  = defaultdict(list)
-    pred_by_type  = defaultdict(list)
-    for s, e, t in gold_spans:
-        gold_by_type[t].append((s, e))
-    for s, e, t in pred_spans:
-        pred_by_type[t].append((s, e))
+    # Group by (doc_i, entity_type) → list of (start, end)
+    gold_by_doc_type = defaultdict(list)
+    pred_by_doc_type = defaultdict(list)
 
-    gold_by_type_count = defaultdict(set)
-    pred_by_type_count = defaultdict(set)
-    matched_gold = defaultdict(set)
+    gold_type_counts = defaultdict(int)   # entity_type → total gold count
+    pred_type_counts = defaultdict(int)   # entity_type → total pred count
 
-    for t in set(list(gold_by_type.keys()) + list(pred_by_type.keys())):
-        golds = gold_by_type[t]
-        preds = pred_by_type[t]
-        for gi, (gs, ge) in enumerate(golds):
-            gold_by_type_count[t].add(gi)
-        for pi, (ps, pe) in enumerate(preds):
-            pred_by_type_count[t].add(pi)
-            # Try to match to an unmatched gold span
+    for doc_i, s, e, t in gold_spans:
+        gold_by_doc_type[(doc_i, t)].append((s, e))
+        gold_type_counts[t] += 1
+    for doc_i, s, e, t in pred_spans:
+        pred_by_doc_type[(doc_i, t)].append((s, e))
+        pred_type_counts[t] += 1
+
+    # Greedy overlap matching within each (doc, type) bucket
+    tp_type_counts = defaultdict(int)
+    for key in set(gold_by_doc_type) | set(pred_by_doc_type):
+        doc_i, t = key
+        golds = gold_by_doc_type[key]
+        preds = pred_by_doc_type[key]
+        matched = set()
+        for ps, pe in preds:
             for gi, (gs, ge) in enumerate(golds):
-                if gi in matched_gold[t]:
-                    continue
-                if ps < ge and gs < pe:   # overlap
-                    matched_gold[t].add(gi)
+                if gi not in matched and ps < ge and gs < pe:   # overlap
+                    matched.add(gi)
                     break
+        tp_type_counts[t] += len(matched)
 
-    # Build TP/FP/FN counts per type
+    # Build per-type report
     report = {}
     total_tp = total_fp = total_fn = 0
-    all_types = set(gold_by_type_count) | set(pred_by_type_count)
+    all_types = set(gold_type_counts) | set(pred_type_counts)
     for t in all_types:
-        tp = len(matched_gold[t])
-        fp = len(pred_by_type_count[t]) - tp
-        fn = len(gold_by_type_count[t]) - tp
+        tp = tp_type_counts[t]
+        fp = pred_type_counts[t] - tp
+        fn = gold_type_counts[t] - tp
         prec = tp / (tp + fp) if (tp + fp) else 0.0
         rec  = tp / (tp + fn) if (tp + fn) else 0.0
         f1   = 2 * prec * rec / (prec + rec) if (prec + rec) else 0.0
         report[t] = {"precision": prec, "recall": rec, "f1": f1,
                      "tp": tp, "fp": fp, "fn": fn,
-                     "support": len(gold_by_type_count[t])}
+                     "support": gold_type_counts[t]}
         total_tp += tp; total_fp += fp; total_fn += fn
 
     micro_p = total_tp / (total_tp + total_fp) if (total_tp + total_fp) else 0.0
@@ -111,7 +120,7 @@ def span_f1_overlap(gold_spans, pred_spans):
     micro_f = 2 * micro_p * micro_r / (micro_p + micro_r) if (micro_p + micro_r) else 0.0
     report["micro avg"] = {"precision": micro_p, "recall": micro_r, "f1": micro_f,
                            "tp": total_tp, "fp": total_fp, "fn": total_fn,
-                           "support": sum(len(v) for v in gold_by_type_count.values())}
+                           "support": sum(gold_type_counts.values())}
     return report
 
 
@@ -228,12 +237,14 @@ def main():
             print(f"  {i + len(batch)}/{len(texts)} notes done...")
 
     # ── Compute F1 ───────────────────────────────────────────────────────────
+    # Tag each span with its document index so cross-document coordinate
+    # collisions do not cause de-duplication in span_f1_exact.
     gold_spans_all, pred_spans_all = [], []
-    for record, preds in zip(test_records, all_preds):
+    for doc_i, (record, preds) in enumerate(zip(test_records, all_preds)):
         for e in record["entities"]:
-            gold_spans_all.append((e["start"], e["end"], e["entity_type"]))
+            gold_spans_all.append((doc_i, e["start"], e["end"], e["entity_type"]))
         for p in preds:
-            pred_spans_all.append((p["start"], p["end"], p["entity_group"]))
+            pred_spans_all.append((doc_i, p["start"], p["end"], p["entity_group"]))
 
     exact_report   = span_f1_exact(gold_spans_all, pred_spans_all)
     overlap_report = span_f1_overlap(gold_spans_all, pred_spans_all)

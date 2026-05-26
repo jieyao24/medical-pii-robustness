@@ -43,7 +43,7 @@ from transformers import (
     pipeline,
 )
 
-from baseline_eval import evaluate_on_ai4privacy, _span_f1
+from baseline_eval import evaluate_on_ai4privacy
 
 
 # ---------------------------------------------------------------------------

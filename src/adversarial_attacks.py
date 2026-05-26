@@ -54,24 +54,42 @@ HOMOGLYPHS = {
 ZWSP = "​"       # zero-width space
 THIN_SPACE = " " # thin space
 
+# NOTE: AI4Privacy v2 (pii-masking-400k) uses GIVENNAME/SURNAME (not FIRSTNAME/LASTNAME),
+# DATEOFBIRTH, TELEPHONENUM, ACCOUNTNUM, SOCIALNUM/DRIVERLICENSENUM, etc.
+# Both actual v2 labels and legacy fallbacks are included.
 AI4PRIVACY_LABEL_MAP = {
+    # Person
+    "GIVENNAME": "private_person", "SURNAME": "private_person",
     "FIRSTNAME": "private_person", "LASTNAME": "private_person",
     "MIDDLENAME": "private_person", "FULLNAME": "private_person",
     "TITLE": "private_person", "SUFFIX": "private_person",
     "ALIAS": "private_person", "USERNAME": "private_person",
     "GENDER": "private_person",
+    # Address
     "STREET": "private_address", "CITY": "private_address",
     "STATE": "private_address", "ZIPCODE": "private_address",
     "COUNTRY": "private_address", "COUNTY": "private_address",
     "POBOX": "private_address", "FULLADDRESS": "private_address",
-    "BUILDINGNUMBER": "private_address", "SECONDARYADDRESS": "private_address",
+    "BUILDINGNUM": "private_address", "BUILDINGNUMBER": "private_address",
+    "SECONDARYADDRESS": "private_address",
+    # Email
     "EMAIL": "private_email",
+    # Phone
+    "TELEPHONENUM": "private_phone",
     "PHONENUMBER": "private_phone", "PHONE": "private_phone",
+    # URL
     "URL": "private_url", "IP": "private_url", "IPADDRESS": "private_url",
+    # Date
+    "DATEOFBIRTH": "private_date",
     "DATE": "private_date", "DOB": "private_date", "TIME": "private_date",
+    # Account number
+    "ACCOUNTNUM": "account_number",
     "CREDITCARDNUMBER": "account_number", "ACCOUNTNUMBER": "account_number",
     "IBAN": "account_number", "BIC": "account_number",
     "BITCOINADDRESS": "account_number",
+    # Secret
+    "SOCIALNUM": "secret", "DRIVERLICENSENUM": "secret",
+    "TAXNUM": "secret", "IDCARDNUM": "secret",
     "SSN": "secret", "PASSPORT": "secret",
     "DRIVERLICENSE": "secret", "PIN": "secret", "PASSWORD": "secret",
 }
@@ -183,6 +201,9 @@ def evaluate_attack(pipe, examples: list[dict], attack_name: str,
 
     for ex in examples:
         text = ex["text"]
+        # Cache clean-text predictions once per document (not once per entity).
+        clean_preds = get_detected_spans(pipe, text)
+
         for gold in ex["entities"]:
             etype = gold["entity_type"]
             if etype not in target_types:
@@ -194,7 +215,6 @@ def evaluate_attack(pipe, examples: list[dict], attack_name: str,
             span = text[gstart:gend]
 
             # Baseline: was the entity detected on clean text?
-            clean_preds = get_detected_spans(pipe, text)
             detected_clean = entity_detected(clean_preds, gstart, gend, etype)
             counts[etype]["total"] += 1
             if not detected_clean:

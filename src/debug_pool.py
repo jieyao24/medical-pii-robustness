@@ -9,6 +9,7 @@ Run:
 """
 
 import csv
+import gzip
 import re
 from datasets import load_dataset
 from build_clinical_eval import PLACEHOLDER_PATTERNS, ENTITY_POOL_KEYS, build_entity_pool, inject_pii
@@ -33,8 +34,8 @@ for label, count in sorted(label_counts.items()):
 # ── 2. Test pattern matching on first MIMIC note ─────────────────────────────
 print("\n=== Pattern matching on first MIMIC note ===")
 MIMIC_CSV = ("/mmfs1/gscratch/scrubbed/jieyao24/data/mimic-iv-note/"
-             "physionet.org/files/mimic-iv-note/2.2/note/discharge.csv")
-with open(MIMIC_CSV) as f:
+             "physionet.org/files/mimic-iv-note/2.2/note/discharge.csv.gz")
+with gzip.open(MIMIC_CSV, "rt") as f:
     reader = csv.DictReader(f)
     row = next(reader)
     text = row["text"]
