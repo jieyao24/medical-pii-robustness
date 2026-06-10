@@ -144,6 +144,26 @@ pip install transformers datasets torch peft evaluate seqeval scikit-learn panda
 
 All experiments run on Hyak `ckpt` partition (A40 GPU, 48 GB RAM).
 
+**LoRA fine-tuning hyperparameters:**
+
+| Parameter | Value |
+|---|---|
+| LoRA rank (r) | 8 |
+| LoRA alpha | 16 (= 2r) |
+| LoRA dropout | 0.1 |
+| Target modules | `q_proj`, `v_proj` |
+| Epochs | 3 |
+| Batch size | 8 |
+| Learning rate | 2e-4 |
+| LR scheduler | Cosine |
+| Warmup ratio | 0.06 |
+| Weight decay | 0.01 |
+| Optimizer | AdamW |
+| Precision | bf16 |
+| Max sequence length | 512 tokens |
+
+3 epochs was sufficient — eval loss converged by epoch 2 across all three training sizes, with negligible improvement in epoch 3.
+
 ```bash
 # Phase 1 — Baseline evaluation
 sbatch scripts/slurm_baseline_eval.sh
